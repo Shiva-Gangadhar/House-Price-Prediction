@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(111, 94, 94, 0.1);
+            margin: auto;
+        }
+        h2 {
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        #prediction-result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+
+<div class="container">
+    <h2>House Price Prediction</h2>
+    <form id="prediction-form">
+        <label for="area">Area (sq ft):</label>
+        <input type="number" id="area" name="area" required>
+
+        <label for="bedrooms">Bedrooms:</label>
+        <input type="number" id="bedrooms" name="bedrooms" required>
+
+        <label for="bathrooms">Bathrooms:</label>
+        <input type="number" id="bathrooms" name="bathrooms" required>
+
+        <label for="stories">Stories:</label>
+        <input type="number" id="stories" name="stories" required>
+
+        <label for="mainroad">Main Road:</label>
+        <select id="mainroad" name="mainroad">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="guestroom">Guest Room:</label>
+        <select id="guestroom" name="guestroom">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="basement">Basement:</label>
+        <select id="basement" name="basement">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="airconditioning">Air Conditioning:</label>
+        <select id="airconditioning" name="airconditioning">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="parking">Parking:</label>
+        <input type="number" id="parking" name="parking" required>
+
+        <label for="furnishingstatus">Furnishing Status:</label>
+        <select id="furnishingstatus" name="furnishingstatus">
+            <option value="furnished">Furnished</option>
+            <option value="semi-furnished">Semi-Furnished</option>
+            <option value="unfurnished">Unfurnished</option>
+        </select>
+
+        <button type="submit">Predict Price</button>
+    </form>
+
+    <div id="prediction-result"></div>
+</div>
+
+<script>
+    document.getElementById("prediction-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        let formData = {
+            area: document.getElementById("area").value,
+            bedrooms: document.getElementById("bedrooms").value,
+            bathrooms: document.getElementById("bathrooms").value,
+            stories: document.getElementById("stories").value,
+            mainroad: document.getElementById("mainroad").value,
+            guestroom: document.getElementById("guestroom").value,
+            basement: document.getElementById("basement").value,
+            airconditioning: document.getElementById("airconditioning").value,
+            parking: document.getElementById("parking").value,
+            furnishingstatus: document.getElementById("furnishingstatus").value
+        };
+
+        fetch("http://127.0.0.1:5000/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("prediction-result").innerHTML = "Predicted Price: $" + data.predicted_price.toFixed(2);
+        })
+        .catch(error => {
+            document.getElementById("prediction-result").innerHTML = "Error: " + error;
+        });
+    });
+</script>
+
+</body>
+</html>
